@@ -25,16 +25,12 @@ func NewCircularQueue[T IntNum](size int) CircularQueue[T] {
 		values: make([]T, size),
 	}
 }
-
 func (q *CircularQueue[T]) Push(value T) bool {
 	if q.Full() {
 		return false
 	}
 	q.values[q.write] = value
-	q.write++
-	if q.write == len(q.values) {
-		q.write = 0
-	}
+	q.write = (q.write + 1) % len(q.values)
 	q.len++
 	return true
 }
@@ -43,10 +39,7 @@ func (q *CircularQueue[T]) Pop() bool {
 	if q.Empty() {
 		return false
 	}
-	q.read++
-	if q.read == len(q.values) {
-		q.read = 0
-	}
+	q.read = (q.read + 1) % len(q.values)
 	q.len--
 	return true
 }
@@ -62,11 +55,7 @@ func (q *CircularQueue[T]) Back() T {
 	if q.Empty() {
 		return -1
 	}
-	last := q.write - 1
-	if last < 0 {
-		last = len(q.values) - 1
-	}
-	return q.values[last]
+	return q.values[(q.write-1+len(q.values))%len(q.values)]
 }
 
 func (q *CircularQueue[T]) Empty() bool {
